@@ -1,5 +1,5 @@
-FILES_TO_RPM = cmd/revad/revad
-SPECFILE = $(shell find . -type f -name *.spec)
+FILES_TO_RPM = cmd/revad/revad cmd/revad/revad-ceph
+SPECFILE = $(shell find . -maxdepth 1 -type f -name *.spec)
 PACKAGE  = $(shell awk '$$1 == "Name:"     { print $$2 }' $(SPECFILE) )
 VERSION  = $(shell awk '$$1 == "Version:"  { print $$2 }' $(SPECFILE) )
 RELEASE  = $(shell awk '$$1 == "Release:"  { print $$2 }' $(SPECFILE) )
@@ -8,7 +8,6 @@ rpmbuild = ${shell pwd}/build
 clean:
 	@rm -rf $(PACKAGE)-$(VERSION)
 	@rm -rf $(rpmbuild)
-	@rm -rf *rpm
 
 rpmdefines=--define='_topdir ${rpmbuild}' \
         --define='_sourcedir %{_topdir}/SOURCES' \
@@ -17,6 +16,8 @@ rpmdefines=--define='_topdir ${rpmbuild}' \
         --define='_rpmdir %{_topdir}/RPMS'
 
 dist: clean
+	make revad-ceph
+	@mv cmd/revad/revad cmd/revad/revad-ceph
 	make revad
 	@mkdir -p $(PACKAGE)-$(VERSION)
 	@cp -r $(FILES_TO_RPM) $(PACKAGE)-$(VERSION)

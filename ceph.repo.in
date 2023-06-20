@@ -1,0 +1,8 @@
+[ceph]
+name=Ceph pacific OSMAJOR
+baseurl=http://linuxsoft.cern.ch/mirror/download.ceph.com/rpm-pacific/elOSMAJOR/$basearch
+enabled=True
+gpgcheck=1
+gpgkey=http://linuxsoft.cern.ch/mirror/download.ceph.com/release.asc
+exclude=xfsprogs*, fcgi*, *13.2.7*, *14.2.10*, *14.2.12*
+priority=1

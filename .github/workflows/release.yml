@@ -33,7 +33,7 @@ jobs:
           source /etc/os-release
           OSMAJ="$(echo $VERSION_ID | cut -c1)"
           cat reva-release/ceph.repo.in | sed "s/OSMAJOR/$OSMAJ/" > /etc/yum.repos.d/ceph.repo
-          [[ $OSMAJ -eq "7" ]] && sed -i "s/quincy/octopus/" /etc/yum.repos.d/ceph.repo && cp reva-release/endpoint.repo /etc/yum.repos.d/endpoint.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/cernbox-revad.spec && echo "Adapted setup to CC7"
+          [[ $OSMAJ -eq "7" ]] && sed -i "s/quincy/octopus/" /etc/yum.repos.d/ceph.repo && cp reva-release/endpoint.repo /etc/yum.repos.d/endpoint.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/cernbox-revad.spec && echo "CI: adapted setup to CC7, installing related dependencies"
           yum install -y git wget make gcc gcc-c++ rpm-build glibc-static libcephfs-devel librbd-devel librados-devel
       - name: Install golang
         run: |

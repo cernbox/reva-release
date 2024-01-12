@@ -4,7 +4,7 @@
 
 Name: cernbox-revad
 Summary: Reva for CERNBox
-Version:     1.0.4
+Version: 1.0.4
 Release: 1%{?dist}
 License: AGPLv3
 BuildRoot: %{_tmppath}/%{name}-buildroot
@@ -74,14 +74,14 @@ install -m 755 reva %buildroot/usr/bin/reva
 rm -rf %buildroot/
 
 %changelog
-* Fri Jan 12 2024 cernbox-admins[bot] <cernbox-admins@cern.ch>     1.0.4
-- v    1.0.4
-* Mon Dec 18 2023 cernbox-admins[bot] <cernbox-admins@cern.ch>    1.0.3
-- v   1.0.3
-* Mon Dec 04 2023 cernbox-admins[bot] <cernbox-admins@cern.ch>   1.0.2
-- v  1.0.2
-* Thu Nov 16 2023 cernbox-admins[bot] <cernbox-admins@cern.ch>  1.0.1
-- v 1.0.1
+* Fri Jan 12 2024 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.4
+- v1.0.4
+* Mon Dec 18 2023 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.3
+- v1.0.3
+* Mon Dec 04 2023 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.2
+- v1.0.2
+* Thu Nov 16 2023 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.1
+- v1.0.1
 * Mon Nov 13 2023 cernbox-admins[bot] <cernbox-admins@cern.ch> 0.0.52
 - v0.0.52
 * Wed Oct 25 2023 cernbox-admins[bot] <cernbox-admins@cern.ch> 0.0.51

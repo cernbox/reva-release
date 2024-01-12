@@ -146,7 +146,7 @@ func getNextVersion(spec []string) string {
 	}
 	for _, line := range spec {
 		if strings.HasPrefix(line, "Version:") {
-			v := strings.TrimPrefix(line, "Version:")
+			v := strings.TrimPrefix(line, "Version: ")
 			split := strings.Split(v, ".")
 
 			ver, err := strconv.ParseInt(split[2], 10, 64)

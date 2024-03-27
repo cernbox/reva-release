@@ -3,8 +3,12 @@ name: Build and release
 on:
   workflow_dispatch:
     inputs:
+      repo:
+        description: 'Reva repository to be used'
+        required: true
+        default: 'cs3org'
       branch:
-        description: 'Reva branch to be used'
+        description: 'Branch to be built'
         required: true
         default: 'master'
       go-version:
@@ -48,7 +52,7 @@ jobs:
       - name: Checkout reva repository
         uses: actions/checkout@v3
         with:
-          repository: cs3org/reva
+          repository: ${{ inputs.repo }}/reva
           path: reva
           ref: ${{ inputs.branch }}
       - name: Copy necessary files for building the RPMs

@@ -53,7 +53,7 @@ jobs:
           export GOPATH=$(pwd)/go
           export PATH=$PATH:$GOPATH/bin
           cd reva
-          export REVAVER="Reva commit $(git rev-parse --short HEAD) at ${{ inputs.branch }}/${{ inputs.repo }}"
+          export REVAVER="Reva commit $(git rev-parse --short HEAD) at ${{ inputs.repo }}/${{ inputs.branch }}"
           cd ../reva-release
           go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch" -reva-version "$REVAVER"
           echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV

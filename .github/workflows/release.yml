@@ -42,19 +42,21 @@ jobs:
       - name: Install golang
         run: |
           wget https://go.dev/dl/go${{ inputs.go-version }}.linux-amd64.tar.gz && tar xfz go${{ inputs.go-version }}.linux-amd64.tar.gz
-      - name: Bump version in spec file
-        run: |
-          export GOPATH=$(pwd)/go
-          export PATH=$PATH:$GOPATH/bin
-          cd reva-release
-          go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch"
-          echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
       - name: Checkout reva repository
         uses: actions/checkout@v3
         with:
           repository: ${{ inputs.repo }}/reva
           path: reva
           ref: ${{ inputs.branch }}
+      - name: Bump version in spec file
+        run: |
+          export GOPATH=$(pwd)/go
+          export PATH=$PATH:$GOPATH/bin
+          cd reva
+          export REVAVER="$(git describe --always) commit $(git rev-parse --short HEAD) at ${{ inputs.branch }}/${{ inputs.repo }}"
+          cd ../reva-release
+          go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch" -reva-version "$REVAVER"
+          echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
       - name: Copy necessary files for building the RPMs
         run: |
           cp reva-release/Makefile reva/Makefile.rpm

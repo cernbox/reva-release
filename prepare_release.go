@@ -33,10 +33,11 @@ import (
 )
 
 var (
-	author     = flag.String("author", "", "the author that creates the release")
-	email      = flag.String("email", "", "the email of the authot that creates the release")
-	versionTag = flag.String("version-tag", "", "the tag of the version")
-	version    = flag.String("version", "0", "version to tag")
+	author      = flag.String("author", "", "the author that creates the release")
+	email       = flag.String("email", "", "the email of the authot that creates the release")
+	versionTag  = flag.String("version-tag", "", "the tag of the version")
+	version     = flag.String("version", "0", "version to tag")
+	revaVersion = flag.String("reva-version", "", "the reva version and commt")
 )
 
 const (
@@ -47,21 +48,21 @@ const (
 func init() {
 	flag.Parse()
 
-	if *author == "" || *email == "" {
-		fmt.Fprintln(os.Stderr, "fill the author and email flags")
+	if *author == "" || *email == "" || *revaVersion == "" {
+		fmt.Fprintln(os.Stderr, "fill the author, email, and revaVersion flags")
 		os.Exit(1)
 	}
 }
 
 func main() {
-	err := releaseNewVersion(*author, *email)
+	err := releaseNewVersion(*author, *email, *revaVersion)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
-func releaseNewVersion(author, email string) error {
+func releaseNewVersion(author, email, revaVersion string) error {
 	specContent, err := readSpecFile()
 	if err != nil {
 		return fmt.Errorf("error reading spec content: %w", err)
@@ -94,7 +95,7 @@ func releaseNewVersion(author, email string) error {
 	var newChangelog []string
 	today := time.Now().Format("Mon Jan 02 2006")
 	newChangelog = append(newChangelog, fmt.Sprintf("* %s %s <%s> %s", today, author, email, versionStr))
-	newChangelog = append(newChangelog, fmt.Sprintf("- v%s", versionStr))
+	newChangelog = append(newChangelog, fmt.Sprintf("- v%s, based on reva %s", versionStr, revaVersion))
 
 	var newSpec []string
 	newSpec = append(newSpec, specContent[:changelogHeader+1]...)

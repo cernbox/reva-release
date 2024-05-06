@@ -57,6 +57,7 @@ jobs:
           cd ../reva-release
           go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch" -reva-version "$REVAVER"
           echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
+          echo "Reva version is "\""$REVAVER"\"
       - name: Copy necessary files for building the RPMs
         run: |
           cp reva-release/Makefile reva/Makefile.rpm

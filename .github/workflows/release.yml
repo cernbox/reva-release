@@ -48,27 +48,19 @@ jobs:
           repository: ${{ inputs.repo }}/reva
           path: reva
           ref: ${{ inputs.branch }}
-      - name: Bump version in spec file
-        run: |
-          export GOPATH=$(pwd)/go
-          export PATH=$PATH:$GOPATH/bin
-          cd reva
-          export REVAVER="Reva commit $(git rev-parse --short HEAD) at ${{ inputs.repo }}/${{ inputs.branch }}"
-          cd ../reva-release
-          go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch" -reva-version "$REVAVER"
-          echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
-          echo "Reva version is "\""$REVAVER"\"
       - name: Copy necessary files for building the RPMs
         run: |
           cp reva-release/Makefile reva/Makefile.rpm
           cp reva-release/cernbox-revad.spec reva/cernbox-revad.spec
       - name: Create reva RPMs
+        id: reva-rpms
         run: |
           set -x
           export GOPATH=$(pwd)/go
           export PATH=$PATH:$GOPATH/bin
           rm -rf ~/.cache/go-build
           cd reva
+          echo revaVer="Reva commit $(git rev-parse --short HEAD) at ${{ inputs.repo }}/${{ inputs.branch }}" >> "$GITHUB_OUTPUT"
           make -f Makefile.rpm rpm
           mkdir /release
           mv cernbox-*.rpm /release
@@ -81,6 +73,8 @@ jobs:
           name: cernbox-rpms
           path: /release
           retention-days: 1
+    outputs:
+      revaVer: ${{ steps.reva-rpms.outputs.revaVer }}
   
   reporelease:
     needs: build
@@ -88,6 +82,8 @@ jobs:
     permissions:
       contents: write
     container: golang:1.20
+    env:
+      REVAVER: ${{ needs.build.outputs.revaVer }}
     steps:
       - name: Checkout release repository
         uses: actions/checkout@v3
@@ -97,8 +93,9 @@ jobs:
         run: |
           export GOPATH=$(pwd)/go
           export PATH=$PATH:$GOPATH/bin
+          echo "Reva version was '$REVAVER'"
           cd reva-release
-          go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch"
+          go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch" -reva-version "${REVAVER}"
           echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
       - name: Push version
         uses: stefanzweifel/git-auto-commit-action@v4

@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        container: [cern/cc7-base, cern/alma8-base, cern/alma9-base]
+        container: [cern/alma8-base, cern/alma9-base]
     permissions:
       contents: write
     container: ${{ matrix.container }}

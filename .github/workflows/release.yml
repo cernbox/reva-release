@@ -39,8 +39,6 @@ jobs:
           cat reva-release/ceph.repo.in | sed "s/OSMAJOR/$OSMAJ/" > /etc/yum.repos.d/ceph.repo
           [[ $OSMAJ -eq "7" ]] && sed -i "s/quincy/octopus/" /etc/yum.repos.d/ceph.repo && cp reva-release/endpoint.repo /etc/yum.repos.d/endpoint.repo && yum -y install yum-plugin-priorities && sed -i '/RemovePathPostfixes.*/d' reva-release/cernbox-revad.spec && echo "CI: adapted setup to CC7, installing related dependencies"
           yum install -y git wget make gcc gcc-c++ rpm-build glibc-static libcephfs-devel librbd-devel librados-devel
-      - name: Install golang
-        run: |
           wget https://go.dev/dl/go${{ inputs.go-version }}.linux-amd64.tar.gz && tar xfz go${{ inputs.go-version }}.linux-amd64.tar.gz
       - name: Checkout reva repository
         uses: actions/checkout@v3
@@ -48,19 +46,26 @@ jobs:
           repository: ${{ inputs.repo }}/reva
           path: reva
           ref: ${{ inputs.branch }}
-      - name: Copy necessary files for building the RPMs
-        run: |
-          cp reva-release/Makefile reva/Makefile.rpm
-          cp reva-release/cernbox-revad.spec reva/cernbox-revad.spec
-      - name: Create reva RPMs
+      - name: Prepare files for building the RPMs
         id: reva-rpms
+        run: |
+          set -x
+          export GOPATH=$(pwd)/go
+          export PATH=$PATH:$GOPATH/bin
+          cd reva
+          echo revaVer="Reva commit $(git rev-parse --short HEAD) at ${{ inputs.repo }}/${{ inputs.branch }}" >> "$GITHUB_OUTPUT"
+          cd ../reva-release
+          go run prepare_release.go -author "temporary" -email "cernbox-admins@cern.ch" -reva-version "Reva commit"
+          echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
+          cp Makefile ../reva/Makefile.rpm
+          cp cernbox-revad.spec ../reva/cernbox-revad.spec
+      - name: Build Reva RPMs
         run: |
           set -x
           export GOPATH=$(pwd)/go
           export PATH=$PATH:$GOPATH/bin
           rm -rf ~/.cache/go-build
           cd reva
-          echo revaVer="Reva commit $(git rev-parse --short HEAD) at ${{ inputs.repo }}/${{ inputs.branch }}" >> "$GITHUB_OUTPUT"
           make -f Makefile.rpm rpm
           mkdir /release
           mv cernbox-*.rpm /release

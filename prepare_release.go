@@ -95,7 +95,7 @@ func releaseNewVersion(author, email, revaVersion string) error {
 	var newChangelog []string
 	today := time.Now().Format("Mon Jan 02 2006")
 	newChangelog = append(newChangelog, fmt.Sprintf("* %s %s <%s> %s", today, author, email, versionStr))
-	newChangelog = append(newChangelog, fmt.Sprintf("- v%s, based on reva %s", versionStr, revaVersion))
+	newChangelog = append(newChangelog, fmt.Sprintf("- v%s, based on %s", versionStr, revaVersion))
 
 	var newSpec []string
 	newSpec = append(newSpec, specContent[:changelogHeader+1]...)

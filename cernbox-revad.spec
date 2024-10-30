@@ -75,7 +75,7 @@ rm -rf %buildroot/
 
 %changelog
 * Wed Oct 30 2024 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.20
-- v1.0.20, based on Reva commit 6b0f9b3 at cs3org/ceph2cbox
+- v1.0.20 experimental, based on Reva commit 6b0f9b3 at cs3org/ceph2cbox
 * Thu Oct 24 2024 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.19
 - v1.0.19, based on Reva commit 10664f4 at cs3org/master
 * Tue Sep 17 2024 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.18

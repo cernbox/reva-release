@@ -11,6 +11,10 @@ on:
         description: 'Branch to be built'
         required: true
         default: 'master'
+      plugins:
+        description: 'Plugins branch to be built'
+        required: true
+        default: 'master'
       go-version:
         description: 'Go version'
         required: true
@@ -46,14 +50,22 @@ jobs:
           repository: ${{ inputs.repo }}/reva
           path: reva
           ref: ${{ inputs.branch }}
+      - name: Checkout plugins repository
+        uses: actions/checkout@v3
+        with:
+          repository: cernbox/reva-plugins
+          path: reva-plugins
+          ref: ${{ inputs.plugins }}
       - name: Prepare files for building the RPMs
         id: reva-rpms
         run: |
           set -x
           export GOPATH=$(pwd)/go
           export PATH=$PATH:$GOPATH/bin
-          cd reva
-          echo revaVer="Reva commit $(git rev-parse --short HEAD) at ${{ inputs.repo }}/${{ inputs.branch }}" >> "$GITHUB_OUTPUT"
+          cd reva-plugins
+          rpcommit=$(git rev-parse --short HEAD)
+          cd ../reva
+          echo revaVer="commit $(git rev-parse --short HEAD) at ${{ inputs.repo }}/reva/${{ inputs.branch }} and commit ${rpcommit} at cernbox/reva-plugins/${{ inputs.plugins }}" >> "$GITHUB_OUTPUT"
           cd ../reva-release
           go run prepare_release.go -author "temporary" -email "cernbox-admins@cern.ch" -reva-version "Reva commit"
           echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV

@@ -17,10 +17,10 @@ clean:
 gaia:
 	go install github.com/cs3org/gaia@latest
 
-dist: clean gaia 
+dist: clean gaia
 	make reva
-	gaia build --with github.com/cernbox/reva-plugins --with github.com/cs3org/reva=$(shell pwd) -o ./cmd/revad/revad
-	gaia build --with github.com/cernbox/reva-plugins --with github.com/cs3org/reva=$(shell pwd) -o ./cmd/revad/revad-ceph --tags ceph
+	gaia build --with github.com/cernbox/reva-plugins=$(shell pwd)-plugins --with github.com/cs3org/reva=$(shell pwd) -o ./cmd/revad/revad --debug
+	gaia build --with github.com/cernbox/reva-plugins=$(shell pwd)-plugins --with github.com/cs3org/reva=$(shell pwd) -o ./cmd/revad/revad-ceph --tags ceph --debug
 	@mkdir -p $(PACKAGE)-$(VERSION)
 	cp -r cmd/revad/revad cmd/revad/revad-ceph cmd/reva/reva $(PACKAGE)-$(VERSION)
 	tar cpfz ./$(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)

@@ -85,7 +85,7 @@ jobs:
           CGO_ENABLED: 1
           CONTAINER: ${{ matrix.container }}
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: cernbox-rpms
           path: /release
@@ -125,7 +125,7 @@ jobs:
           tagging_message: v${{ env.version }}
       - name: Download artifacts
         id: download
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Release
         uses: softprops/action-gh-release@v1
         with:

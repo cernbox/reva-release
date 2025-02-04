@@ -111,8 +111,9 @@ jobs:
           export GOPATH=$(pwd)/go
           export PATH=$PATH:$GOPATH/bin
           echo "Reva version was '$REVAVER'"
+          export ISRC=$(if [[ "${{ inputs.branch }}" == "master" ]] &&  [[ "${{ inputs.plugins }}" == "master" ]]; then echo false ; else echo true; fi)
           cd reva-release
-          go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch" -reva-version "${REVAVER}"
+          go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch" -reva-version "${REVAVER}" -release-candidate "${ISRC}"
           echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
       - name: Push version
         uses: stefanzweifel/git-auto-commit-action@v4

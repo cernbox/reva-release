@@ -33,11 +33,12 @@ import (
 )
 
 var (
-	author      = flag.String("author", "", "the author that creates the release")
-	email       = flag.String("email", "", "the email of the authot that creates the release")
-	versionTag  = flag.String("version-tag", "", "the tag of the version")
-	version     = flag.String("version", "0", "version to tag")
-	revaVersion = flag.String("reva-version", "", "the reva version and commt")
+	author           = flag.String("author", "", "the author that creates the release")
+	email            = flag.String("email", "", "the email of the author that creates the release")
+	versionTag       = flag.String("version-tag", "", "the tag of the version")
+	version          = flag.String("version", "0", "version to tag")
+	revaVersion      = flag.String("reva-version", "", "the reva version and commit")
+	releaseCandidate = flag.Bool("release-candidate", false, "Is a release candidate?")
 )
 
 const (
@@ -145,16 +146,32 @@ func getNextVersion(spec []string) string {
 	if *version != "0" {
 		return *version
 	}
+	rcversion := int64(0)
 	for _, line := range spec {
 		if strings.HasPrefix(line, "Version:") {
 			v := strings.TrimPrefix(line, "Version: ")
+			if strings.Contains(v, "-rc") {
+				var err error
+				splitrc := strings.Split(v, "-rc")
+				rcversion, err = strconv.ParseInt(splitrc[1], 10, 64)
+				if err != nil {
+					return "invalid"
+				}
+				v = splitrc[0]
+			}
 			split := strings.Split(v, ".")
 
 			ver, err := strconv.ParseInt(split[2], 10, 64)
 			if err != nil {
 				return "invalid"
 			}
-			return fmt.Sprintf("%s.%s.%d", split[0], split[1], int(ver) + 1)
+			if *releaseCandidate {
+				if rcversion == 0 {
+					return fmt.Sprintf("%s.%s.%d-rc%d", split[0], split[1], int(ver)+1, int(rcversion)+1)
+				}
+				return fmt.Sprintf("%s.%s.%d-rc%d", split[0], split[1], int(ver), int(rcversion)+1)
+			}
+			return fmt.Sprintf("%s.%s.%d", split[0], split[1], int(ver)+1)
 		}
 	}
 	panic("cannot find a version")

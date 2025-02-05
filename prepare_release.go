@@ -69,7 +69,11 @@ func releaseNewVersion(author, email, revaVersion string) error {
 		return fmt.Errorf("error reading spec content: %w", err)
 	}
 
-	versionStr := getNextVersion(specContent)
+	versionStr, err := getNextVersion(specContent)
+	fmt.Printf("Version is %s\n", versionStr)
+	if err != nil {
+		return err
+	}
 	if *versionTag != "" && *versionTag != prodBranch {
 		versionStr += "." + *versionTag
 	}
@@ -142,36 +146,42 @@ func writeSpecFile(spec []string) error {
 	return nil
 }
 
-func getNextVersion(spec []string) string {
+func getNextVersion(spec []string) (string, error) {
 	if *version != "0" {
-		return *version
+		return *version, nil
 	}
 	rcversion := int64(0)
 	for _, line := range spec {
 		if strings.HasPrefix(line, "Version:") {
 			v := strings.TrimPrefix(line, "Version: ")
-			if strings.Contains(v, "-rc") {
+			if strings.Contains(v, "_rc") {
 				var err error
-				splitrc := strings.Split(v, "-rc")
+				splitrc := strings.Split(v, "_rc")
 				rcversion, err = strconv.ParseInt(splitrc[1], 10, 64)
 				if err != nil {
-					return "invalid"
+					return "", err
 				}
 				v = splitrc[0]
+				fmt.Printf("Previous version has _rc, of which actual version is %s\n", v)
 			}
 			split := strings.Split(v, ".")
 
 			ver, err := strconv.ParseInt(split[2], 10, 64)
 			if err != nil {
-				return "invalid"
+				return "", err
 			}
+			fmt.Printf("Release candidate? %t\n", *releaseCandidate)
 			if *releaseCandidate {
+				// We want x.y.z_rc(a)
 				if rcversion == 0 {
-					return fmt.Sprintf("%s.%s.%d-rc%d", split[0], split[1], int(ver)+1, int(rcversion)+1)
+					return fmt.Sprintf("%s.%s.%d_rc%d", split[0], split[1], int(ver)+1, int(rcversion)+1), nil
 				}
-				return fmt.Sprintf("%s.%s.%d-rc%d", split[0], split[1], int(ver), int(rcversion)+1)
+				return fmt.Sprintf("%s.%s.%d_rc%d", split[0], split[1], int(ver), int(rcversion)+1), nil
 			}
-			return fmt.Sprintf("%s.%s.%d", split[0], split[1], int(ver)+1)
+			if rcversion != 0 { // previous version was x.y.z_rc(a), so now we just want x.y.z
+				return fmt.Sprintf("%s.%s.%d", split[0], split[1], int(ver)), nil
+			}
+			return fmt.Sprintf("%s.%s.%d", split[0], split[1], int(ver)+1), nil
 		}
 	}
 	panic("cannot find a version")

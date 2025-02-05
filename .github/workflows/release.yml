@@ -58,7 +58,9 @@ jobs:
           ref: ${{ inputs.plugins }}
       - name: Prepare files for building the RPMs
         id: reva-rpms
+        shell: bash
         run: |
+          #!/bin/bash
           set -x
           export GOPATH=$(pwd)/go
           export PATH=$PATH:$GOPATH/bin
@@ -66,8 +68,10 @@ jobs:
           rpcommit=$(git rev-parse --short HEAD)
           cd ../reva
           echo revaVer="commit $(git rev-parse --short HEAD) at ${{ inputs.repo }}/reva/${{ inputs.branch }} and commit ${rpcommit} at cernbox/reva-plugins/${{ inputs.plugins }}" >> "$GITHUB_OUTPUT"
+          export ISRC=$(if [[ "${{ inputs.branch }}" == "master" ]] &&  [[ "${{ inputs.plugins }}" == "master" ]]; then echo false ; else echo true; fi)
+          echo "Release candidate? '$ISRC'"
           cd ../reva-release
-          go run prepare_release.go -author "temporary" -email "cernbox-admins@cern.ch" -reva-version "Reva commit"
+          go run prepare_release.go -author="cernbox-admins[bot]" -email="cernbox-admins@cern.ch" -reva-version="Reva commit" -release-candidate="${ISRC}"
           echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
           cp Makefile ../reva/Makefile.rpm
           cp cernbox-revad.spec ../reva/cernbox-revad.spec
@@ -107,13 +111,16 @@ jobs:
         with:
           path: reva-release
       - name: Bump version in spec file
+        shell: bash
         run: |
+          #!/bin/bash
           export GOPATH=$(pwd)/go
           export PATH=$PATH:$GOPATH/bin
           echo "Reva version was '$REVAVER'"
           export ISRC=$(if [[ "${{ inputs.branch }}" == "master" ]] &&  [[ "${{ inputs.plugins }}" == "master" ]]; then echo false ; else echo true; fi)
+          echo "Release candidate? '$ISRC'"
           cd reva-release
-          go run prepare_release.go -author "cernbox-admins[bot]" -email "cernbox-admins@cern.ch" -reva-version "${REVAVER}" -release-candidate "${ISRC}"
+          go run prepare_release.go -author="cernbox-admins[bot]" -email="cernbox-admins@cern.ch" -reva-version="${REVAVER}" -release-candidate="${ISRC}"
           echo "version=$(awk '$1 == "Version:" {print $2}' cernbox-revad.spec)" >> $GITHUB_ENV
       - name: Push version
         uses: stefanzweifel/git-auto-commit-action@v4

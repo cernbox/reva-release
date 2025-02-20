@@ -4,7 +4,7 @@
 
 Name: cernbox-revad
 Summary: Reva for CERNBox
-Version: 1.0.32
+Version: 1.0.33
 Release: 1%{?dist}
 License: AGPLv3
 BuildRoot: %{_tmppath}/%{name}-buildroot
@@ -74,6 +74,8 @@ install -m 755 reva %buildroot/usr/bin/reva
 rm -rf %buildroot/
 
 %changelog
+* Thu Feb 20 2025 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.33
+- v1.0.33, based on commit 7c299e3 at cs3org/reva/master and commit 6fa38f1 at cernbox/reva-plugins/master
 * Tue Feb 18 2025 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.32
 - v1.0.32, based on commit bb9b46f at cs3org/reva/master and commit bb9833a at cernbox/reva-plugins/master
 * Fri Feb 07 2025 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.32_rc3

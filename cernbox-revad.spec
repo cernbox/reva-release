@@ -4,7 +4,7 @@
 
 Name: cernbox-revad
 Summary: Reva for CERNBox
-Version: 1.0.34_rc2
+Version: 1.0.34_rc3
 Release: 1%{?dist}
 License: AGPLv3
 BuildRoot: %{_tmppath}/%{name}-buildroot
@@ -74,6 +74,8 @@ install -m 755 reva %buildroot/usr/bin/reva
 rm -rf %buildroot/
 
 %changelog
+* Mon Mar 03 2025 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.34_rc3
+- v1.0.34_rc3, based on commit d36f5cf at cs3org/reva/feat/publishare-sqldriver-in-plugins and commit d4c5866 at cernbox/reva-plugins/master
 * Thu Feb 27 2025 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.34_rc2
 - v1.0.34_rc2, based on commit 9d2533e at cs3org/reva/master and commit 641d885 at cernbox/reva-plugins/feat/public-links-ormified
 * Tue Feb 25 2025 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.34_rc1

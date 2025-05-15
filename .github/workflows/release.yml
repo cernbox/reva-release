@@ -18,7 +18,7 @@ on:
       go-version:
         description: 'Go version'
         required: true
-        default: '1.22.7'
+        default: '1.24.2'
 
 jobs:
   build:
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    container: golang:1.22
+    container: golang:1.24
     env:
       REVAVER: ${{ needs.build.outputs.revaVer }}
     steps:

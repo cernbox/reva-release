@@ -4,7 +4,7 @@
 
 Name: cernbox-revad
 Summary: Reva for CERNBox
-Version: 1.0.45_rc2
+Version: 1.0.45_rc3
 Release: 1%{?dist}
 License: AGPLv3
 BuildRoot: %{_tmppath}/%{name}-buildroot
@@ -74,6 +74,8 @@ install -m 755 reva %buildroot/usr/bin/reva
 rm -rf %buildroot/
 
 %changelog
+* Fri Jun 27 2025 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.45_rc3
+- v1.0.45_rc3, based on commit 0db7497 at cs3org/reva/fix/enablehome-double-wrap and commit 4faa32a at cernbox/reva-plugins/master
 * Thu Jun 26 2025 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.45_rc2
 - v1.0.45_rc2, based on commit ab3c530 at cs3org/reva/fix/enablehome-double-wrap and commit 4faa32a at cernbox/reva-plugins/master
 * Thu Jun 26 2025 cernbox-admins[bot] <cernbox-admins@cern.ch> 1.0.45_rc1
